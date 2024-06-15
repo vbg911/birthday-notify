@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: birthday_admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: birthdays_db
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 15s
+      timeout: 5s
+    volumes:
+      - ../pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  birthday-notify:
+    restart: always
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    environment:
+      CONFIG_PATH: "../config/config.yaml"
+      SMTP_PASS: "your pass"
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../config:/config
+
+
+volumes:
+  pg_data:

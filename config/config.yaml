@@ -1,0 +1,9 @@
+env: "local"
+postgres_connect: "postgresql://birthday_admin:admin@postgres:5432/birthdays_db"
+http_server:
+  fiber_address: "0.0.0.0:8082"
+  read_timeout: 4s
+smtp_server:
+  smtp_address: "smtp.gmail.com"
+  smtp_port: "587"
+  from: "your email"
